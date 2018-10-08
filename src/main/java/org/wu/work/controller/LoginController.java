@@ -67,7 +67,7 @@ public class LoginController{
 	public ModelAndView index() {
 		return new ModelAndView("login");
 	}
-	
+
 	@RequiresRoles("admin")
 	@ResponseBody
 	@RequestMapping(value="/login")
