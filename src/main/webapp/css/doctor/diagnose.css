@@ -1,0 +1,17 @@
+ .skip{
+	width: 60px;
+	display: inline;
+}
+.pagePosition{
+	margin-top:30px;
+	margin-left: -10%;
+}
+.checkForm{
+	cursor: pointer;
+}
+.diagnoseForm{
+	cursor: pointer;
+}
+.presForm{
+	cursor: pointer;
+}

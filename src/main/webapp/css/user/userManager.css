@@ -1,0 +1,17 @@
+.skip{
+	width: 50px;
+	height:30px;
+	display: inline;
+	border-radius: 30%;
+}
+.pagePosition{
+	margin-top:30px;
+	margin-left: -10%;
+}
+.del{
+	cursor: pointer;
+	margin-left: 20px;
+}
+.detail{
+	cursor: pointer;
+}

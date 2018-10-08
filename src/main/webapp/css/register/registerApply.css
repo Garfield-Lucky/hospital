@@ -1,0 +1,102 @@
+ #session1 .registerInto {
+    width: 350px;
+}
+#session1 .registerPage {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #dcdcdc;
+    clear: both;
+    left: 50%;
+    margin-left: -233px;
+    margin-top: -250px;
+    position: absolute;
+    top: -300px;
+    z-index: 1000;
+    display:none;
+}
+
+/*  蒙版 */
+.mask {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, .5)
+}
+
+#session1 .registerPage h3 {
+    border-bottom: 1px solid red;
+    color: #666;
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    padding-left: 19px;
+    padding-top: 5px;
+    position: relative;
+}
+ 
+
+#session1 .registerPage .close {
+    color: gray;
+    font-size: 30px;
+    position: absolute;
+    right: 10px;
+    text-decoration: none;
+    top: 15px;
+    cursor: pointer;
+}
+
+#session1 .registerPage .context {
+    color: #333;
+    font-size: 16px;
+    padding-top: 5px;
+    padding-left: 20px
+}
+#session1 .registerPage .payType {
+    color: #333;
+    font-size: 16px;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-bottom: 20px;
+}
+#session1 .yuyue {
+    border-top: 1px solid #f0f0f0;
+    padding: 10px 60px 10px 0;
+    text-align: right;
+}
+
+#session1 .yuyue .cancel {
+    background: #999 none repeat scroll 0 0;
+}
+#session1 .yuyue span {
+    color: #fff;
+    display: inline-block;
+    font-size: 14px;
+    height: 28px;
+    line-height: 28px;
+    margin-left: 30px;
+    text-align: center;
+    text-decoration: none;
+    width: 80px;
+}
+
+#session1 .yuyue .ok {
+    background: #be0000 none repeat scroll 0 0;
+    cursor: pointer;
+}
+
+
+ .skip{
+	width: 60px;
+	display: inline;
+}
+.pagePosition{
+	margin-top:30px;
+	margin-left: -10%;
+}
+.register{
+	cursor: pointer;
+}
+ 

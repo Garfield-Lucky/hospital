@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation=" 
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+ 
+  	<!-- 配置数据源 c3p0 -->
+<!-- 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" -->
+<!-- 		destroy-method="close"> -->
+<!-- 		<property name="driverClass" value="${jdbc.driver}" /> -->
+<!-- 		<property name="jdbcUrl" value="${jdbc.url}" /> -->
+<!-- 		<property name="user" value="${jdbc.username}" /> -->
+<!-- 		<property name="password" value="${jdbc.password}" /> -->
+
+		<!-- 请求超时时间 --> 
+<!-- 		<property name="checkoutTimeout" value="30000" /> -->
+		<!-- 每60秒检查所有连接池中的空闲连接。默认值: 0，不检查 --> 
+<!-- 		<property name="idleConnectionTestPeriod" value="30" /> -->
+		<!-- 连接数据库连接池最大空闲时间 --> 
+<!-- 		<property name="maxIdleTime" value="30" /> -->
+		<!-- 连接池初始化连接数 --> 
+<!-- 		<property name="initialPoolSize" value="5" /> -->
+<!-- 		<property name="minPoolSize" value="5" /> -->
+<!-- 		<property name="maxPoolSize" value="20" /> -->
+ 		<!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。默认值: 3 --> 
+<!-- 		<property name="acquireIncrement" value="5" /> -->
+<!-- 	</bean> -->
+	
+	<!-- 配置数据源 使用的是Druid数据源 -->
+	<bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+
+		<!-- 初始化连接大小 -->
+		<property name="initialSize" value="5" />
+		<!-- 连接池最大使用连接数量 -->
+		<property name="maxActive" value="20" />
+		
+		<!-- 连接池最小空闲 -->
+		<property name="minIdle" value="5" />
+		<!-- 获取连接最大等待时间 -->
+		<property name="maxWait" value="60000" />
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="33" />
+		<!-- 用来检测有效sql -->
+		<property name="validationQuery" value="select * from dual" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+		<property name="testWhileIdle" value="true" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="600000" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="25200000" />
+		<!-- 打开removeAbandoned功能 -->
+		<property name="removeAbandoned" value="true" />
+		<!-- 1800秒，也就是30分钟 -->
+		<property name="removeAbandonedTimeout" value="1800" />
+		<!-- 关闭abanded连接时输出错误日志 -->
+		<property name="logAbandoned" value="true" />
+		<!-- 监控数据库 -->
+		<property name="filters" value="stat" />
+	</bean>
+
+	<!-- 配置hibernate的SessionFactory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<!-- 注入数据源 相关信息看源码 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- hibernate配置信息 -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+
+				<!-- 开启二级缓存 ehcache -->
+				<prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop>
+				<prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</prop>
+				<prop key="hibernate.cache.region.factory_class">${hibernate.cache.region.factory_class}</prop>
+				<prop key="hibernate.cache.provider_configuration_file_resource_path">${hibernate.cache.provider_configuration_file_resource_path}
+				</prop>
+			</props>
+		</property>
+		<!-- 扫描hibernate注解配置的entity -->
+		<property name="packagesToScan" value="org.wu.work.entity" />
+	</bean>
+
+	<!-- 配置事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<!-- 配置事务增强处理Bean，指定事务管理器 -->
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+		<!-- 配置详细事务处理语义 -->
+		<tx:attributes>
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+
+			<tx:method name="get*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="find*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="select*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="load*" propagation="SUPPORTS" read-only="true" />
+
+			<!-- 其他采用默认事务方式 -->
+			<tx:method name="*" />
+
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- Spring aop事务管理 -->
+	<aop:config>
+		<!-- 配置切入点 -->
+		<aop:pointcut id="transactionPointcut"
+			expression="execution(* org.wu.work.service..*Impl.*(..))" />
+		<!-- 指定在txAdvice切入点应用txAdvice事务增强处理 -->
+		<aop:advisor pointcut-ref="transactionPointcut"
+			advice-ref="transactionAdvice" />
+	</aop:config>
+	
+	
+	
+	
+	
+	    <!--载入 redis 配置文件-->
+<!--     <context:property-placeholder location="classpath:redis.properties" ignore-unresolvable="true"/> -->
+<!-- 	    配置 JedisPoolConfig 实例 -->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="${redis.maxIdle}"/>
+        <property name="maxTotal" value="${redis.maxActive}"/>
+        <property name="maxWaitMillis" value="${redis.maxWait}"/>
+        <property name="testOnBorrow" value="${redis.testOnBorrow}"/>
+    </bean>
+
+<!--     配置JedisConnectionFactory -->
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="hostName" value="${redis.host}"/>
+        <property name="port" value="${redis.port}"/>
+<!--         <property name="password" value="${redis.pass}"/> -->
+        <property name="database" value="${redis.dbIndex}"/>
+        <property name="poolConfig" ref="poolConfig"/>
+    </bean>
+
+<!--     配置RedisTemplatec    -->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="jedisConnectionFactory"/>
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"></bean>
+        </property>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>
+        <property name="hashValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>
+    </bean>
+
+<!-- cache配置 -->
+    <bean id="methodCacheInterceptor" class="org.wu.work.intercept.MethodCacheInterceptor">
+        <property name="redisUtil" ref="redisUtil"/>
+    </bean>
+    <bean id="redisUtil" class="org.wu.work.util.RedisUtil">
+        <property name="redisTemplate" ref="redisTemplate"/>
+    </bean>
+    
+    <!--配置切面拦截方法 -->
+    <aop:config proxy-target-class="true">
+        <!--将com.crossoverJie.service包下的所有select开头的方法加入拦截
+        去掉select则加入所有方法w
+        -->
+        <aop:pointcut id="controllerMethodPointcut" expression="
+        execution(* org.wu.work.service.*.query*(..))"/>
+        <aop:pointcut id="selectMethodPointcut" expression="
+        execution(* org.wu.work.dao..*.select*(..))"/>
+        <aop:advisor advice-ref="methodCacheInterceptor" pointcut-ref="controllerMethodPointcut"/>
+    </aop:config>
+
+
+<!--     <bean id="loginFilter" class="org.wu.work.filter.LoginFilter"> -->
+    
+<!--         <property name="jedisPool" ref="jedisPool"/> -->
+<!--     </bean> -->
+
+
+<!-- **********************************shiro*************************************** -->
+<!-- 配置自定义Realm -->
+    <bean id="myRealm" class="org.wu.work.shiro.MyRealm"/>
+    <!-- 安全管理器 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="myRealm"/>
+    </bean>
+    <!-- Shiro过滤器 核心-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <!-- Shiro的核心安全接口,这个属性是必须的 -->
+        <property name="securityManager" ref="securityManager"/>
+        <!-- 身份认证失败，则跳转到登录页面的配置 -->
+        <property name="loginUrl" value="/login.jsp"/>
+        <!-- 权限认证失败，则跳转到指定页面 -->
+        <property name="unauthorizedUrl" value="/nopower.jsp"/>
+        <!-- Shiro连接约束配置,即过滤链的定义 -->
+        <property name="filterChainDefinitions">
+            <value>
+                    /loginAdmin=anon
+			        <!--authc表示需要认证 没有进行身份认证是不能进行访问的-->
+<!-- 			        /login/**=anon -->
+<!-- 			        /assets/**=anon -->
+<!-- 			        /bootstrap-3.3.7-dist/**=anon -->
+<!-- 			        /checkImage/**=anon -->
+<!-- 			        /css/**=anon -->
+<!-- 			        /images/**=anon -->
+<!-- 			        /js/**=anon -->
+<!-- 			        /My97DatePicker/*=anon -->
+<!-- 			        /admin*=authc -->
+<!-- 			        /pages/**=authc -->
+<!-- 			        /student=roles[teacher] -->
+<!-- 			        /teacher=perms["user:create"] -->
+<!-- 			        /user=roles[admin] -->
+<!--                 /doctor=perms["user:create"] -->
+<!--                 /doctor=perms[doctor] -->
+<!--                 /static/** = anon -->
+<!--                 /login = anon -->
+<!--                 /login/** = anon -->
+<!--                 /logout = roles[admin] -->
+                /** = anon
+            </value>
+        </property>
+    </bean>
+    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <!-- 开启Shiro注解 -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor"/>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+    
+    
+<!-- 2.配置自定义异常处理器类 -->
+    <bean class="org.wu.work.controller.ExceptionHandler" />
+
+</beans>

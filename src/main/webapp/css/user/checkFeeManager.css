@@ -1,0 +1,21 @@
+ .checkItem{
+ width: 300px;
+ }
+ .checkCode{
+  width: 300px;
+ }
+ .skip{
+	width: 60px;
+	display: inline;
+}
+.pagePosition{
+	margin-top:30px;
+	margin-left: -10%;
+}
+.del{
+	cursor: pointer;
+}
+.update{
+	cursor: pointer;
+}
+ 

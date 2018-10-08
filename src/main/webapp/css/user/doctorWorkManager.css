@@ -1,0 +1,22 @@
+#session{
+ width: 100%;
+ height:400px;
+ padding: 30px 30px;
+}
+  .Wdate{
+ height: 35px;
+ }
+ .skip{
+	width: 60px;
+	display: inline;
+}
+.pagePosition{
+	margin-top:30px;
+	margin-left: -10%;
+}
+.del{
+	cursor: pointer;
+}
+.update{
+	cursor: pointer;
+}

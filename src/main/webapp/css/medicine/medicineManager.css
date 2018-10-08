@@ -1,0 +1,18 @@
+.bs-example{
+  padding-left: 30px;
+  padding-top: 30px;
+ } 
+ .skip{
+	width: 60px;
+	display: inline;
+}
+.pagePosition{
+	margin-top:30px;
+	margin-left: -10%;
+}
+.del{
+	cursor: pointer;
+}
+.detail{
+	cursor: pointer;
+}
