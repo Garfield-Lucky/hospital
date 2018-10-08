@@ -61,6 +61,7 @@ public class LoginController{
 		return new ModelAndView("login");
 	}
 
+	//首页
 	@RequestMapping(value="/")
 	public ModelAndView index() {
 		return new ModelAndView("login");
