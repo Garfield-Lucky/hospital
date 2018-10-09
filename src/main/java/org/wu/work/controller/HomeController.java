@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class HomeController{
 
+	//home
 	/**
 	 * 创建时间：2016-12-9 下午17:25:00  
      * @author 没有尾巴的章鱼  
